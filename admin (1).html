@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALWAN Election Admin - 2026–27</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #10b981;
+            --primary-blue: #0ea5e9;
+            --dark-blue: #0369a1;
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+            --dark-gray: #1e293b;
+            --light-gray: #e2e8f0;
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #f59e0b;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #f0f9ff 100%);
+            color: var(--dark-gray);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-sub {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* ============ GRID LAYOUT ============ */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--dark-gray);
+        }
+
+        /* ============ CONTROL BUTTONS ============ */
+        .control-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--primary-green), #059669);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ============ STATUS DISPLAY ============ */
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .status-label {
+            font-weight: 600;
+        }
+
+        .status-value {
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 4px;
+        }
+
+        .status-value.enabled {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-value.disabled {
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--error);
+        }
+
+        /* ============ RESULTS TABLE ============ */
+        .results-container {
+            grid-column: 1 / -1;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .results-table thead {
+            background: var(--light-bg);
+        }
+
+        .results-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .results-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .results-table tbody tr:hover {
+            background: var(--light-bg);
+        }
+
+        .candidate-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .candidate-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .votes-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-green);
+        }
+
+        /* ============ ALERT ============ */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background: rgba(5, 150, 105, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert.error {
+            background: rgba(220, 38, 38, 0.1);
+            border-left: 4px solid var(--error);
+            color: var(--error);
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============ STATISTICS ============ */
+        .stat-box {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .results-container {
+                grid-column: 1;
+            }
+
+            .results-table {
+                font-size: 0.9rem;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div>
+                <div class="logo">⚡ ALWAN ELECTION ADMIN</div>
+                <div class="logo-sub">2026–27</div>
+            </div>
+            <div class="admin-badge">🔐 Admin Dashboard</div>
+        </div>
+
+        <!-- ALERTS -->
+        <div class="alert" id="alertMessage"></div>
+
+        <!-- DASHBOARD -->
+        <div class="dashboard">
+            <!-- VOTING CONTROL -->
+            <div class="card">
+                <h3>📋 Voting Control</h3>
+                <div class="status-item">
+                    <span class="status-label">Voting Status:</span>
+                    <span class="status-value" id="votingStatus">Loading...</span>
+                </div>
+                <div class="control-group">
+                    <button class="btn btn-success" onclick="toggleVoting(true)">Enable Voting</button>
+                    <button class="btn btn-danger" onclick="toggleVoting(false)">Close Voting</button>
+                </div>
+            </div>
+
+            <!-- RESULTS CONTROL -->
+            <div class="card">
+                <h3>📊 Results Display</h3>
+                <div class="status-item">
+                    <span class="status-label">Results Visible:</span>
+                    <span class="status-value" id="resultsStatus">Loading...</span>
+                </div>
+                <div class="control-group">
+                    <button class="btn btn-success" onclick="toggleResults(true)">Show Results</button>
+                    <button class="btn btn-danger" onclick="toggleResults(false)">Hide Results</button>
+                </div>
+            </div>
+
+            <!-- STATISTICS -->
+            <div class="card">
+                <h3>📈 Statistics</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="stat-box" style="background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));">
+                        <div class="stat-label">Total Votes</div>
+                        <div class="stat-number" id="totalVotes">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Registered Voters</div>
+                        <div class="stat-number" id="totalVoters">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPORT -->
+            <div class="card">
+                <h3>📥 Export Results</h3>
+                <div class="control-group">
+                    <button class="btn btn-primary" onclick="exportResults('csv')">Export CSV</button>
+                    <button class="btn btn-primary" onclick="exportResults('json')">Export JSON</button>
+                </div>
+            </div>
+
+            <!-- DANGER ZONE -->
+            <div class="card" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.05), rgba(220, 38, 38, 0.1)); border-left: 4px solid var(--error);">
+                <h3 style="color: var(--error);">⚠️ Danger Zone</h3>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">
+                    Clear all votes and reset the election. This action cannot be undone!
+                </p>
+                <button class="btn btn-danger" onclick="clearAllVotes()" style="width: 100%;">🗑️ Clear All Votes & Reset</button>
+            </div>
+
+            <!-- RESULTS TABLE -->
+            <div class="card results-container">
+                <h3>🏆 Live Results</h3>
+                <div id="resultsContainer">Loading results...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzqHyIYsaEk4z9XD7Ug5ahroIxU27Y8-YGyT1LMlIiwR3FIaRdE-YshLQDQz-uKr2z6/exec';
+
+        // ============ INITIALIZATION ============
+        function initDashboard() {
+            updateVotingStatus();
+            updateResultsStatus();
+            updateResults();
+            updateStatistics();
+
+            // Auto-refresh every 5 seconds
+            setInterval(() => {
+                updateResults();
+                updateStatistics();
+            }, 5000);
+        }
+
+        // ============ STATUS UPDATES ============
+        async function updateVotingStatus() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getVotingStatus' })
+                });
+                const data = await response.json();
+                
+                const statusElement = document.getElementById('votingStatus');
+                if (data.votingEnabled) {
+                    statusElement.textContent = '🟢 ACTIVE';
+                    statusElement.className = 'status-value enabled';
+                } else {
+                    statusElement.textContent = '🔴 CLOSED';
+                    statusElement.className = 'status-value disabled';
+                }
+            } catch (error) {
+                console.error('Error updating voting status:', error);
+            }
+        }
+
+        async function updateResultsStatus() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getVotingStatus' })
+                });
+                const data = await response.json();
+                
+                const statusElement = document.getElementById('resultsStatus');
+                if (data.resultsVisible) {
+                    statusElement.textContent = '🟢 VISIBLE';
+                    statusElement.className = 'status-value enabled';
+                } else {
+                    statusElement.textContent = '🔴 HIDDEN';
+                    statusElement.className = 'status-value disabled';
+                }
+            } catch (error) {
+                console.error('Error updating results status:', error);
+            }
+        }
+
+        // ============ TOGGLE FUNCTIONS ============
+        async function toggleVoting(enabled) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'toggleVoting',
+                        enabled: enabled
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    updateVotingStatus();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function toggleResults(enabled) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'toggleResults',
+                        enabled: enabled
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    updateResultsStatus();
+                    updateResults();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        }
+
+        // ============ RESULTS DISPLAY ============
+        async function updateResults() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getResults' })
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    document.getElementById('resultsContainer').innerHTML = 
+                        '<p style="color: #666; text-align: center;">Results will be displayed here after voting concludes.</p>';
+                    return;
+                }
+
+                let html = '';
+                const posts = ['President', 'Secretary', 'Treasurer'];
+
+                posts.forEach(post => {
+                    const candidates = data.results[post] || [];
+                    html += `
+                        <h4 style="margin-top: 20px; margin-bottom: 10px; color: var(--primary-blue);">${post}</h4>
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>ID</th>
+                                    <th>Votes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${candidates.map(c => `
+                                    <tr>
+                                        <td class="candidate-cell">
+                                            <img src="${c.photoUrl}" alt="${c.name}" class="candidate-photo">
+                                            <strong>${c.name}</strong>
+                                        </td>
+                                        <td>${c.candidateId}</td>
+                                        <td class="votes-cell">${c.totalVotes}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                });
+
+                document.getElementById('resultsContainer').innerHTML = html;
+            } catch (error) {
+                console.error('Error updating results:', error);
+            }
+        }
+
+        // ============ STATISTICS ============
+        async function updateStatistics() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getResults' })
+                });
+                const data = await response.json();
+
+                let totalVotes = 0;
+                if (data.success && data.results) {
+                    const posts = ['President', 'Secretary', 'Treasurer'];
+                    posts.forEach(post => {
+                        if (data.results[post]) {
+                            data.results[post].forEach(candidate => {
+                                totalVotes += candidate.totalVotes || 0;
+                            });
+                        }
+                    });
+                }
+
+                document.getElementById('totalVotes').textContent = totalVotes;
+            } catch (error) {
+                console.error('Error updating statistics:', error);
+            }
+        }
+
+        // ============ EXPORT ============
+        async function exportResults(format) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'exportResults',
+                        format: format
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    if (format === 'csv') {
+                        downloadFile(data.data, 'election-results.csv', 'text/csv');
+                    } else if (format === 'json') {
+                        downloadFile(JSON.stringify(data.data, null, 2), 'election-results.json', 'application/json');
+                    }
+                    showAlert('Results exported successfully', 'success');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Export error: ' + error.message, 'error');
+            }
+        }
+
+        // ============ CLEAR ALL VOTES ============
+        async function clearAllVotes() {
+            // Double confirmation
+            if (!confirm('⚠️ WARNING: This will delete ALL votes!\n\nAre you sure? This cannot be undone!')) {
+                return;
+            }
+            
+            if (!confirm('🔴 FINAL CONFIRMATION\n\nDelete all votes and reset election?\n\nClick OK to permanently clear all votes.')) {
+                return;
+            }
+
+            try {
+                const button = event.target;
+                button.classList.add('loading');
+                button.disabled = true;
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'clearAllVotes'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('✅ All votes cleared and election reset!', 'success');
+                    // Refresh dashboard
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Error clearing votes', 'error');
+                    button.classList.remove('loading');
+                    button.disabled = false;
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+                const button = event.target;
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        // ============ HELPERS ============
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertMessage');
+            alert.textContent = message;
+            alert.className = `alert ${type} show`;
+            setTimeout(() => alert.classList.remove('show'), 4000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', initDashboard);
+    </script>
+</body>
+</html>
